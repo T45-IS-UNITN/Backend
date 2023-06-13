@@ -20,7 +20,7 @@ const checkAdmin = async (req, res, next) => {
   }
 };
 
-router.get("/getall", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const utenti = await Utente.find();
     res.json(utenti);
@@ -29,9 +29,25 @@ router.get("/getall", async (req, res) => {
   }
 });
 
-router.post("/add", async (req, res) => {
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
   try {
-    const { nome, email, password } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Errore nel recuperare l'utente" });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
     // Verifica se l'utente esiste già
     const utenteEsistente = await Utente.findOne({ email });
@@ -44,7 +60,7 @@ router.post("/add", async (req, res) => {
 
     // Crea una nuova istanza dell'utente
     const nuovoUtente = new Utente({
-      nome,
+      name,
       email,
       password,
     });

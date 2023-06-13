@@ -22,7 +22,7 @@ router.post("/", verifyToken, async (req, res) => {
 });
 
 // prende tutte le recensioni
-router.get("/getall", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const recensioni = await Recensione.find();
     res.json(recensioni);
@@ -31,19 +31,8 @@ router.get("/getall", async (req, res) => {
   }
 });
 
-// recensioni dato il libro
-router.get("/ofbook/:libroId", async (req, res) => {
-  try {
-    const libroId = req.params.libroId;
-    const recensioni = await Recensione.find({ libro: libroId });
-    res.json(recensioni);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // recensioni dato l'utente autore
-router.get("/ofuser/:utenteId", async (req, res) => {
+router.get("/user/:utenteId", async (req, res) => {
   try {
     const utenteId = req.params.utenteId;
     const recensioni = await Recensione.find({ autore: utenteId });

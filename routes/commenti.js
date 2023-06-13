@@ -6,7 +6,7 @@ const Utente = require("../models/Utente");
 const { verifyToken, verifyRole } = require("../middleware/auth");
 
 // commenti di una recensione
-router.get("getall/:recensioneId", async (req, res) => {
+router.get("/:recensioneId", async (req, res) => {
   try {
     const recensioneId = req.params.recensioneId;
     const commenti = await Commento.find({ recensione: recensioneId });
@@ -17,7 +17,7 @@ router.get("getall/:recensioneId", async (req, res) => {
 });
 
 // pubblica un commento
-router.post("post/:recensioneId", verifyToken, async (req, res) => {
+router.post("/:recensioneId", verifyToken, async (req, res) => {
   try {
     const { contenuto, autoreId } = req.body;
     const { recensioneId } = req.params;
@@ -47,7 +47,7 @@ router.post("post/:recensioneId", verifyToken, async (req, res) => {
 });
 
 // commenti dato un libro
-router.get("getbookcomments/:libroId", async (req, res) => {
+router.get("ofbook/:libroId", async (req, res) => {
   try {
     const libroId = req.params.libroId;
 
@@ -69,7 +69,7 @@ router.get("getbookcomments/:libroId", async (req, res) => {
 });
 
 // commmenti di un autore
-router.get("getusercomments/:autoreId", async (req, res) => {
+router.get("ofuser/:autoreId", async (req, res) => {
   try {
     const autoreId = req.params.autoreId;
 
@@ -99,7 +99,7 @@ router.get("getusercomments/:autoreId", async (req, res) => {
 
 // cancella commento
 router.delete(
-  "remove/:commentoId",
+  "/:commentoId",
   verifyToken,
   verifyRole("moderatore"),
   async (req, res) => {
