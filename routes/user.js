@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { Utente, Amministratore } = require("../models/utente");
 const { verifyToken } = require("../middleware/auth");
 
-router.post("/nuovoUtente", async (req, res) => {
+router.post("/user/add", async (req, res) => {
   try {
     const { nome, email, password } = req.body;
 
@@ -40,7 +40,7 @@ router.post("/nuovoUtente", async (req, res) => {
   }
 });
 
-router.delete("/cancellaUtente/:userId", verifyToken, async (req, res) => {
+router.delete("/user/remove/:userId", verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const loggedUserId = req.userId;
@@ -65,31 +65,35 @@ router.delete("/cancellaUtente/:userId", verifyToken, async (req, res) => {
 });
 
 // admin: promuovi utente a moderatore
-router.put("/utenti/:utenteId/moderatore", checkAdmin, async (req, res) => {
-  try {
-    const { utenteId } = req.params;
+router.put(
+  "/user/promote/:utenteId/moderatore",
+  checkAdmin,
+  async (req, res) => {
+    try {
+      const { utenteId } = req.params;
 
-    // Verifica se l'utente esiste
-    const utente = await Utente.findById(utenteId);
-    if (!utente) {
-      return res.status(404).json({ message: "Utente non trovato" });
+      // Verifica se l'utente esiste
+      const utente = await Utente.findById(utenteId);
+      if (!utente) {
+        return res.status(404).json({ message: "Utente non trovato" });
+      }
+
+      // Aggiorna il ruolo dell'utente a "moderatore"
+      utente.ruolo = "moderatore";
+      await utente.save();
+
+      res
+        .status(200)
+        .json({ message: "Ruolo utente aggiornato a moderatore", utente });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    // Aggiorna il ruolo dell'utente a "moderatore"
-    utente.ruolo = "moderatore";
-    await utente.save();
-
-    res
-      .status(200)
-      .json({ message: "Ruolo utente aggiornato a moderatore", utente });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-});
+);
 
 // admin: revoca dei privilegi di moderatore
 router.put(
-  "/utenti/:utenteId/revocaModeratore",
+  "/user/declass/:utenteId/revocaModeratore",
   checkAdmin,
   async (req, res) => {
     try {

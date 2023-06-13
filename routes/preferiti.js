@@ -3,7 +3,7 @@ const router = express.Router();
 const Utente = require("../models/Utente");
 const Libro = require("../models/Libro");
 
-router.post("/aggiungiPreferito", async (req, res) => {
+router.post("/preferiti/add", async (req, res) => {
   try {
     const { userId, libroId } = req.body;
 
@@ -42,7 +42,7 @@ router.post("/aggiungiPreferito", async (req, res) => {
   }
 });
 
-router.delete("/rimuoviPreferito", async (req, res) => {
+router.delete("/preferiti/remove", async (req, res) => {
   try {
     const { userId, libroId } = req.query;
 

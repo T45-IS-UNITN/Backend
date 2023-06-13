@@ -17,38 +17,34 @@ router.get("/commenti/:recensioneId", async (req, res) => {
 });
 
 // pubblica un commento
-router.post(
-  "/recensioni/:recensioneId/commenti",
-  verifyToken,
-  async (req, res) => {
-    try {
-      const { contenuto, autoreId } = req.body;
-      const { recensioneId } = req.params;
+router.post("/commenti/:recensioneId", verifyToken, async (req, res) => {
+  try {
+    const { contenuto, autoreId } = req.body;
+    const { recensioneId } = req.params;
 
-      // Verifica se la recensione esiste
-      const recensione = await Recensione.findById(recensioneId);
-      if (!recensione) {
-        return res.status(404).json({ message: "Recensione non trovata" });
-      }
-
-      // Crea un nuovo commento
-      const commento = new Commento({
-        contenuto,
-        autore: autoreId,
-        recensione: recensioneId,
-      });
-
-      // Salva il commento nel database
-      await commento.save();
-
-      res
-        .status(201)
-        .json({ message: "Commento pubblicato con successo", commento });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    // Verifica se la recensione esiste
+    const recensione = await Recensione.findById(recensioneId);
+    if (!recensione) {
+      return res.status(404).json({ message: "Recensione non trovata" });
     }
+
+    // Crea un nuovo commento
+    const commento = new Commento({
+      contenuto,
+      autore: autoreId,
+      recensione: recensioneId,
+    });
+
+    // Salva il commento nel database
+    await commento.save();
+
+    res
+      .status(201)
+      .json({ message: "Commento pubblicato con successo", commento });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-);
+});
 
 // commenti dato un libro
 router.get("/commenti/:libroId", async (req, res) => {

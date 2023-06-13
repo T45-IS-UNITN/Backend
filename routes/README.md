@@ -37,8 +37,8 @@ Questo file contiene i metodi per gestire i libri preferiti degli utenti.
 
 ### Endpoint
 
-- `POST /aggiungiPreferito`: Aggiunge un libro alla lista dei preferiti dell'utente.
-- `DELETE /rimuoviPreferito`: Rimuove un libro dalla lista dei preferiti dell'utente.
+- `POST /preferiti/add`: Aggiunge un libro alla lista dei preferiti dell'utente.
+- `DELETE /preferiti/remove`: Rimuove un libro dalla lista dei preferiti dell'utente.
 
 ### Requisiti
 
@@ -114,7 +114,7 @@ Questo file contiene i metodi per gestire le operazioni legate ai commenti delle
 ### Endpoint
 
 - `GET /commenti/:recensioneId`: Ottiene tutti i commenti relativi a una recensione specifica.
-- `POST /recensioni/:recensioneId/commenti`: Pubblica un commento per una recensione specifica.
+- `POST /commenti/:recensioneId`: Pubblica un commento per una recensione specifica.
 - `GET /commenti/:libroId`: Ottiene tutti i commenti relativi a un libro specifico.
 - `GET /commenti/:autoreId`: Ottiene tutti i commenti di un autore specifico.
 - `DELETE /commenti/:commentoId`: Cancella un commento specifico.
@@ -181,10 +181,10 @@ Questo file contiene i metodi per gestire le operazioni legate agli utenti, come
 
 ### Endpoint
 
-- `POST /nuovoUtente`: Crea un nuovo utente.
-- `DELETE /cancellaUtente/:userId`: Cancella l'utente specificato.
-- `PUT /utenti/:utenteId/moderatore`: Promuove l'utente a moderatore.
-- `PUT /utenti/:utenteId/revocaModeratore`: Revoca i privilegi di moderatore dall'utente.
+- `POST /user/add`: Crea un nuovo utente.
+- `DELETE /user/remove/:userId`: Cancella l'utente specificato.
+- `PUT /user/promote/:utenteId/moderatore`: Promuove l'utente a moderatore.
+- `PUT /user/declass/:utenteId/revocaModeratore`: Revoca i privilegi di moderatore dall'utente.
 
 ### Middleware
 

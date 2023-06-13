@@ -3,7 +3,7 @@ const router = express.Router();
 const Libro = require("../models/libro");
 const Utente = require("../models/utente");
 
-router.get("/feedLibri", async (req, res) => {
+router.get("/feed/feedLibri", async (req, res) => {
   try {
     const userId = req.query.userId;
 
@@ -42,7 +42,7 @@ router.get("/feedLibri", async (req, res) => {
   }
 });
 
-router.get("/feedRecensioni", async (req, res) => {
+router.get("/feed/feedRecensioni", async (req, res) => {
   try {
     const { userId } = req.query;
 

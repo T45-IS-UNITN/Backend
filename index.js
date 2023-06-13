@@ -2,16 +2,20 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 require("dotenv/config");
 
 app.use(bodyParser.json());
 
 //routes
-//import routes
-const recensioniRoute = require("./routes/recensioni");
-
-// middleware
-app.use("/recensioni", recensioniRoute);
+//import all routes
+fs.readdirSync("./routes").forEach((file) => {
+  if (file.endsWith(".js")) {
+    const route = require(`./routes/${file}`);
+    const routeName = file.split(".")[0];
+    app.use(`/${routeName}`, route);
+  }
+});
 
 // connecto to db
 mongoose.connect(process.env.DB_CONNECTION);

@@ -3,7 +3,7 @@ const router = express.Router();
 const Utente = require("../models/Utente");
 
 // Aggiungi un utente alla lista degli utenti seguiti
-router.post("/follow/:userId", async (req, res) => {
+router.post("/follow/add/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     const utenteSeguitoId = req.body.utenteSeguitoId;
@@ -30,10 +30,10 @@ router.post("/follow/:userId", async (req, res) => {
 });
 
 // Rimuovi un utente dalla lista degli utenti seguiti
-router.delete("/unfollow/:userId/:utenteSeguitoId", async (req, res) => {
+router.delete("/follow/remove/:userId/", async (req, res) => {
   try {
     const userId = req.params.userId;
-    const utenteSeguitoId = req.params.utenteSeguitoId;
+    const utenteSeguitoId = req.nody.utenteSeguitoId;
 
     const utente = await Utente.findById(userId);
 
