@@ -4,7 +4,7 @@ const Recensione = require("../models/Recensione");
 const { verifyToken, verifyRole } = require("../middleware/auth");
 
 // pubblica una recensione
-router.post("/recensioni", verifyToken, async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     const { titolo, contenuto, voto, autore, libro } = req.body;
     const recensione = new Recensione({
@@ -22,7 +22,7 @@ router.post("/recensioni", verifyToken, async (req, res) => {
 });
 
 // prende tutte le recensioni
-router.get("/recensioni", async (req, res) => {
+router.get("/getall", async (req, res) => {
   try {
     const recensioni = await Recensione.find();
     res.json(recensioni);
@@ -32,7 +32,7 @@ router.get("/recensioni", async (req, res) => {
 });
 
 // recensioni dato il libro
-router.get("/recensioni/:libroId", async (req, res) => {
+router.get("/ofbook/:libroId", async (req, res) => {
   try {
     const libroId = req.params.libroId;
     const recensioni = await Recensione.find({ libro: libroId });
@@ -43,7 +43,7 @@ router.get("/recensioni/:libroId", async (req, res) => {
 });
 
 // recensioni dato l'utente autore
-router.get("/recensioni/:utenteId", async (req, res) => {
+router.get("/ofuser/:utenteId", async (req, res) => {
   try {
     const utenteId = req.params.utenteId;
     const recensioni = await Recensione.find({ autore: utenteId });
@@ -55,7 +55,7 @@ router.get("/recensioni/:utenteId", async (req, res) => {
 
 // cancella recensione
 router.delete(
-  "/recensioni/:recensioneId",
+  "/:recensioneId",
   verifyToken,
   verifyRole("moderatore"),
   async (req, res) => {

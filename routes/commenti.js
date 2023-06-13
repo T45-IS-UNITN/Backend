@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Commento = require("../models/Commento");
 const Recensione = require("../models/Recensione");
-const Utente = require("../models/utente");
+const Utente = require("../models/Utente");
 const { verifyToken, verifyRole } = require("../middleware/auth");
 
 // commenti di una recensione
-router.get("/commenti/:recensioneId", async (req, res) => {
+router.get("getall/:recensioneId", async (req, res) => {
   try {
     const recensioneId = req.params.recensioneId;
     const commenti = await Commento.find({ recensione: recensioneId });
@@ -17,7 +17,7 @@ router.get("/commenti/:recensioneId", async (req, res) => {
 });
 
 // pubblica un commento
-router.post("/commenti/:recensioneId", verifyToken, async (req, res) => {
+router.post("post/:recensioneId", verifyToken, async (req, res) => {
   try {
     const { contenuto, autoreId } = req.body;
     const { recensioneId } = req.params;
@@ -47,7 +47,7 @@ router.post("/commenti/:recensioneId", verifyToken, async (req, res) => {
 });
 
 // commenti dato un libro
-router.get("/commenti/:libroId", async (req, res) => {
+router.get("getbookcomments/:libroId", async (req, res) => {
   try {
     const libroId = req.params.libroId;
 
@@ -69,7 +69,7 @@ router.get("/commenti/:libroId", async (req, res) => {
 });
 
 // commmenti di un autore
-router.get("/commenti/:autoreId", async (req, res) => {
+router.get("getusercomments/:autoreId", async (req, res) => {
   try {
     const autoreId = req.params.autoreId;
 
@@ -99,7 +99,7 @@ router.get("/commenti/:autoreId", async (req, res) => {
 
 // cancella commento
 router.delete(
-  "/commenti/:commentoId",
+  "remove/:commentoId",
   verifyToken,
   verifyRole("moderatore"),
   async (req, res) => {
