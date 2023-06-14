@@ -69,45 +69,4 @@ router.get("/:libroId", async (req, res) => {
   }
 });
 
-// Aggiungi una recensione a un libro
-router.post("/:libroId/recensioni", verifyToken, async (req, res) => {
-  try {
-    const libroId = req.params.libroId;
-    const { titolo, contenuto, voto, autore } = req.body;
-
-    const libro = await Libro.findById(libroId);
-    if (!libro) {
-      return res.status(404).json({ message: "Libro non trovato" });
-    }
-
-    const recensione = new Recensione({
-      titolo,
-      contenuto,
-      voto,
-      autore,
-      libro: libroId,
-    });
-
-    const nuovaRecensione = await recensione.save();
-
-    libro.recensioni.push(nuovaRecensione._id);
-    await libro.save();
-
-    res.status(201).json(nuovaRecensione);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Ottieni tutte le recensioni di un libro
-router.get("/:libroId/recensioni", async (req, res) => {
-  try {
-    const libroId = req.params.libroId;
-    const recensioni = await Recensione.find({ libro: libroId });
-    res.json(recensioni);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 module.exports = router;
