@@ -69,4 +69,26 @@ router.get("/:libroId", async (req, res) => {
   }
 });
 
+router.delete("/:libroId", async (req, res) => {
+  try {
+    const libroId = req.params.libroId;
+
+    // Verifica se il libro esiste nel database
+    const libro = await Libro.findById(libroId);
+    if (!libro) {
+      return res.status(404).json({ message: "Libro non trovato" });
+    }
+
+    // Cancella il libro
+    await Libro.findByIdAndDelete(libroId);
+
+    // Cancella tutte le recensioni associate al libro
+    await Recensione.deleteMany({ libro: libroId });
+
+    res.json({ message: "Libro cancellato con successo" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
