@@ -81,7 +81,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/remove/:userId", verifyToken, async (req, res) => {
+router.delete("/:userId", verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const loggedUserId = req.userId;
