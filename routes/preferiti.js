@@ -3,7 +3,7 @@ const router = express.Router();
 const Utente = require("../models/Utente");
 const Libro = require("../models/Libro");
 
-router.post("/add", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { userId, libroId } = req.body;
 
@@ -42,7 +42,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.delete("/remove", async (req, res) => {
+router.delete("/", async (req, res) => {
   try {
     const { userId, libroId } = req.query;
 
@@ -69,6 +69,23 @@ router.delete("/remove", async (req, res) => {
     await utente.save();
 
     res.json({ message: "Libro rimosso dalla lista dei preferiti" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Trova l'utente corrispondente
+    const utente = await Utente.findById(userId).populate("libriPreferiti");
+
+    if (!utente) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+
+    res.json({ preferiti: utente.libriPreferiti });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

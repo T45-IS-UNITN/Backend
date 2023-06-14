@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 });
 
 // aggiungi array di libri[]
-router.post("/add/list", async (req, res) => {
+router.post("/list", async (req, res) => {
   try {
     const libri = req.body.libri;
 

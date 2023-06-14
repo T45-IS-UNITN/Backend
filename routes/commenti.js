@@ -39,7 +39,7 @@ router.post("/:recensioneId", verifyToken, async (req, res) => {
     await commento.save();
 
     res
-      .status(201)
+      .status(200)
       .json({ message: "Commento pubblicato con successo", commento });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -47,7 +47,7 @@ router.post("/:recensioneId", verifyToken, async (req, res) => {
 });
 
 // commenti dato un libro
-router.get("ofbook/:libroId", async (req, res) => {
+router.get("libro/:libroId", async (req, res) => {
   try {
     const libroId = req.params.libroId;
 
@@ -69,7 +69,7 @@ router.get("ofbook/:libroId", async (req, res) => {
 });
 
 // commmenti di un autore
-router.get("ofuser/:autoreId", async (req, res) => {
+router.get("user/:autoreId", async (req, res) => {
   try {
     const autoreId = req.params.autoreId;
 
