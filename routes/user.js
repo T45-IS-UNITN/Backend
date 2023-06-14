@@ -106,7 +106,7 @@ router.delete("/:userId", verifyToken, async (req, res) => {
 });
 
 // admin: promuovi utente a moderatore
-router.put("/promote/:utenteId/moderatore", checkAdmin, async (req, res) => {
+router.put("/promote/:utenteId", checkAdmin, async (req, res) => {
   try {
     const { utenteId } = req.params;
 
@@ -129,41 +129,35 @@ router.put("/promote/:utenteId/moderatore", checkAdmin, async (req, res) => {
 });
 
 // admin: revoca dei privilegi di moderatore
-router.put(
-  "/declass/:utenteId/revocaModeratore",
-  checkAdmin,
-  async (req, res) => {
-    try {
-      const { utenteId } = req.params;
+router.put("/declass/:utenteId", checkAdmin, async (req, res) => {
+  try {
+    const { utenteId } = req.params;
 
-      // Verifica se l'utente esiste
-      const utente = await Utente.findById(utenteId);
-      if (!utente) {
-        return res.status(404).json({ message: "Utente non trovato" });
-      }
-
-      // Verifica se l'utente è un moderatore
-      if (!(utente instanceof Moderatore)) {
-        return res
-          .status(400)
-          .json({ message: "L'utente non è un moderatore" });
-      }
-
-      // Revoca il ruolo di moderatore
-      const updatedUtente = await Utente.findByIdAndUpdate(
-        utenteId,
-        { $unset: { __t: 1 }, ruolo: "utente" },
-        { new: true }
-      );
-
-      res.status(200).json({
-        message: "Ruolo di moderatore revocato",
-        utente: updatedUtente,
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+    // Verifica se l'utente esiste
+    const utente = await Utente.findById(utenteId);
+    if (!utente) {
+      return res.status(404).json({ message: "Utente non trovato" });
     }
+
+    // Verifica se l'utente è un moderatore
+    if (!(utente instanceof Moderatore)) {
+      return res.status(400).json({ message: "L'utente non è un moderatore" });
+    }
+
+    // Revoca il ruolo di moderatore
+    const updatedUtente = await Utente.findByIdAndUpdate(
+      utenteId,
+      { $unset: { __t: 1 }, ruolo: "utente" },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Ruolo di moderatore revocato",
+      utente: updatedUtente,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-);
+});
 
 module.exports = router;

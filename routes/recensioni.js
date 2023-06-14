@@ -42,6 +42,20 @@ router.get("/user/:utenteId", async (req, res) => {
   }
 });
 
+// tutte le recensioni di un libro
+router.get("/libro/:libroId", async (req, res) => {
+  try {
+    const libroId = req.params.libroId;
+
+    // Trova le recensioni relative al libro
+    const recensioni = await Recensione.find({ libro: libroId });
+
+    res.json(recensioni);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // cancella recensione
 router.delete(
   "/:recensioneId",
