@@ -7,6 +7,10 @@ const cors = require("cors");
 require("dotenv/config");
 
 app.use(bodyParser.json());
+app.use(cors({
+    origin: '*'
+}));
+
 
 //routes
 //import all routes
