@@ -22,8 +22,18 @@ fs.readdirSync("./routes").forEach((file) => {
   }
 });
 
-// connecto to db
-mongoose.connect(process.env.DB_CONNECTION);
+// connect to db
+mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Connected to MongoDB");
+    // start server
+    const server = app.listen(3000, () => {
+      const { address, port } = server.address();
+      console.log(`Server listening on ${address}:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB", error);
+  });
 
-// start server
-app.listen(3000);
+module.exports = app;

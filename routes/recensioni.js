@@ -4,22 +4,28 @@ const Recensione = require("../models/Recensione");
 const { verifyToken, verifyRole } = require("../middleware/auth");
 
 // pubblica una recensione
-router.post("/", verifyToken, async (req, res) => {
-  try {
-    const { titolo, contenuto, voto, autore, libro } = req.body;
-    const recensione = new Recensione({
-      titolo,
-      contenuto,
-      voto,
-      autore,
-      libro,
-    });
-    const nuovaRecensione = await recensione.save();
-    res.status(201).json(nuovaRecensione);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+router.post(
+  "/",
+  // verifyToken,
+  async (req, res) => {
+    try {
+      const { titolo, contenuto, voto, autore, libro } = req.body;
+      const recensione = new Recensione({
+        titolo,
+        contenuto,
+        voto,
+        autore,
+        libro,
+      });
+      const nuovaRecensione = await recensione.save();
+      res.status(201).json({
+        id: nuovaRecensione._id,
+      });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 // prende tutte le recensioni
 router.get("/", async (req, res) => {
@@ -59,8 +65,8 @@ router.get("/libro/:libroId", async (req, res) => {
 // cancella recensione
 router.delete(
   "/:recensioneId",
-  verifyToken,
-  verifyRole("moderatore"),
+  // verifyToken,
+  // verifyRole("moderatore"),
   async (req, res) => {
     try {
       const recensioneId = req.params.recensioneId;
@@ -73,7 +79,7 @@ router.delete(
       }
 
       // Cancella la recensione
-      await recensione.remove();
+      await Recensione.deleteOne({ _id: recensioneId });
 
       res.json({ message: "Recensione cancellata con successo" });
     } catch (error) {
