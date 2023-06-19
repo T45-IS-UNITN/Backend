@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Commento = require("../models/Commento");
 const Recensione = require("../models/Recensione");
-const Utente = require("../models/Utente");
+const Utente = require("../models/Utente").Utente;
 const { verifyToken, verifyRole } = require("../middleware/auth");
 
 // commenti di una recensione
@@ -17,37 +17,39 @@ router.get("/:recensioneId", async (req, res) => {
 });
 
 // pubblica un commento
-router.post("/:recensioneId", verifyToken, async (req, res) => {
-  try {
-    const { contenuto, autoreId } = req.body;
-    const { recensioneId } = req.params;
+router.post("/:recensioneId",
+  //verifyToken,
+  async (req, res) => {
+    try {
+      const { testo, autoreId } = req.body;
+      const { recensioneId } = req.params;
 
-    // Verifica se la recensione esiste
-    const recensione = await Recensione.findById(recensioneId);
-    if (!recensione) {
-      return res.status(404).json({ message: "Recensione non trovata" });
+      // Verifica se la recensione esiste
+      const recensione = await Recensione.findById(recensioneId);
+      if (!recensione) {
+        return res.status(404).json({ message: "Recensione non trovata" });
+      }
+
+      // Crea un nuovo commento
+      const commento = new Commento({
+        testo: testo,
+        autore: autoreId,
+        recensione: recensioneId,
+      });
+
+      // Salva il commento nel database
+      await commento.save();
+
+      res
+        .status(200)
+        .json({ message: "Commento pubblicato con successo", commento });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    // Crea un nuovo commento
-    const commento = new Commento({
-      contenuto,
-      autore: autoreId,
-      recensione: recensioneId,
-    });
-
-    // Salva il commento nel database
-    await commento.save();
-
-    res
-      .status(200)
-      .json({ message: "Commento pubblicato con successo", commento });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  });
 
 // commenti dato un libro
-router.get("libro/:libroId", async (req, res) => {
+router.get("/libro/:libroId", async (req, res) => {
   try {
     const libroId = req.params.libroId;
 
@@ -69,7 +71,7 @@ router.get("libro/:libroId", async (req, res) => {
 });
 
 // commmenti di un autore
-router.get("user/:autoreId", async (req, res) => {
+router.get("/user/:autoreId", async (req, res) => {
   try {
     const autoreId = req.params.autoreId;
 
@@ -98,10 +100,9 @@ router.get("user/:autoreId", async (req, res) => {
 });
 
 // cancella commento
-router.delete(
-  "/:commentoId",
-  verifyToken,
-  verifyRole("moderatore"),
+router.delete("/:commentoId",
+  // verifyToken,
+  // verifyRole("moderatore"),
   async (req, res) => {
     try {
       const commentoId = req.params.commentoId;
@@ -114,13 +115,12 @@ router.delete(
       }
 
       // Cancella il commento
-      await commento.remove();
+      await Commento.deleteOne({ _id: commentoId });
 
       res.json({ message: "Commento cancellato con successo" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
-);
+  });
 
 module.exports = router;
