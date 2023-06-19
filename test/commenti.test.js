@@ -1,10 +1,6 @@
 const request = require("supertest");
 const assert = require("assert");
 const app = require("../index");
-const Commento = require("../models/Commento");
-const Utente = require("../models/Utente").Utente;
-const Libro = require("../models/Libro")
-const Recensione = require("../models/Recensione");
 const { setupData, testBefore, testAfter } = require("./utils")
 
 describe("Test API Commenti", () => {

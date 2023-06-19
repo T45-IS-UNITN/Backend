@@ -2,14 +2,22 @@ const Utente = require("../models/Utente").Utente;
 const Recensione = require("../models/Recensione");
 const Commento = require("../models/Commento");
 const Libro = require("../models/Libro")
+const invalidTokens = require("../models/InvalidToken")
+const bcrypt = require("bcrypt");
 
 async function setupData() {
     try {
+
+        // Cifratura della password, emula un "POST /user"
+        const saltRounds = 10;
+        const clearPassword = "password123"
+        const hashedPassword = await bcrypt.hash(clearPassword, saltRounds);
+
         // Creazione di un utente di prova
         const utente = new Utente({
             name: "John Doe",
             email: "johndoe@example.com",
-            password: "password123",
+            password: hashedPassword, // password: password123
         });
 
         await utente.save();
@@ -31,10 +39,6 @@ async function setupData() {
         });
 
         await libro2.save();
-
-        // Aggiunta di libro1 e libro2 ai suoi preferiti
-        utente.libriPreferiti.push(libro1, libro2);
-        await utente.save();
 
         // Creazione di una recensione
         const recensione = new Recensione({
@@ -70,10 +74,6 @@ async function setupData() {
 
         await utenteSeguito.save();
 
-        // Aggiunta di utenteSeguito ai follow di utente
-        utente.follow.push(utenteSeguito);
-        await utente.save();
-
         // Ritorna i dati di prova che potrebbero essere utili nei test
         return {
             utente,
@@ -83,6 +83,8 @@ async function setupData() {
             recensione,
             commento1,
             commento2,
+            clearPassword
+
         };
     } catch (error) {
         console.error("Errore durante la creazione dei dati di prova:", error);
@@ -100,9 +102,11 @@ async function testBefore() {
         await Libro.deleteMany({});
         // Rimozione dei documenti dal modello Utente
         await Utente.deleteMany({});
-        console.log("Dati di prova rimossi con successo dal database.");
+        // Rimozione dei token scaduti
+        await invalidTokens.deleteMany({});
+        console.log("Preparazione del database.");
     } catch (error) {
-        console.error("Errore durante la rimozione dei dati di prova:", error);
+        console.error("Errore durante la preparazione dei dati di prova:", error);
         throw error;
     }
 }
@@ -117,6 +121,8 @@ async function testAfter() {
         await Libro.deleteMany({});
         // Rimozione dei documenti dal modello Utente
         await Utente.deleteMany({});
+        // Rimozione dei token scaduti
+        await invalidTokens.deleteMany({});
         console.log("Dati di prova rimossi con successo dal database.");
     } catch (error) {
         console.error("Errore durante la rimozione dei dati di prova:", error);

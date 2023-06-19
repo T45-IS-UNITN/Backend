@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const Utente = require("../models/Utente");
+const Utente = require("../models/Utente").Utente;
 
 // Aggiungi un utente alla lista degli utenti seguiti
 router.post("/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     const utenteSeguitoId = req.body.utenteSeguitoId;
+
+    if (userId == utenteSeguitoId)
+      return res.status(500).json({ message: "Impossibile seguirsi da soli" })
 
     const utente = await Utente.findById(userId);
 
@@ -50,7 +53,7 @@ router.get("/:userId/preferiti", async (req, res) => {
 router.delete("/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
-    const utenteSeguitoId = req.nody.utenteSeguitoId;
+    const utenteSeguitoId = req.body.utenteSeguitoId;
 
     const utente = await Utente.findById(userId);
 

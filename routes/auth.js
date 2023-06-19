@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const Utente = require("../models/Utente").Utente;
+const invalidTokens = require("../models/InvalidToken")
 const { generateToken, verifyToken } = require("../middleware/auth");
 
 // Endpoint per il login
@@ -25,19 +26,34 @@ router.post("/login", async (req, res) => {
     // Genera il token di autenticazione
     const token = generateToken(user._id);
 
-    res.json({ "token": token, "userId":user._id });
+    res.json({ "token": token, "userId": user._id });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-router.post("/logout", verifyToken, (req, res) => {
+router.post("/logout", verifyToken, async (req, res) => {
   try {
+
+    if (!req.headers.authorization) {
+      return res
+        .status(401)
+        .json({ message: "Token di autenticazione mancante" });
+    }
+
     // Ottieni il token dalla richiesta
     const token = req.headers.authorization.split(" ")[1];
 
+    // Aggiungi la firma del token all'elenco delle firme invalidate
+    const oldToken = new invalidTokens({
+      token: token,
+    });
+
+    // Save the invalid token to the database
+    await oldToken.save();
+
     // Invalida il token nel server
-    jwt.invalidate(token);
+    // jwt.invalidate(token);
 
     res.json({ message: "Logout effettuato con successo" });
   } catch (error) {

@@ -1,83 +1,76 @@
 const express = require("express");
 const router = express.Router();
 const Libro = require("../models/Libro");
-const Utente = require("../models/Utente");
+const Utente = require("../models/Utente").Utente;
+const Recensione = require("../models/Recensione")
 
-router.get("/libri", async (req, res) => {
+router.get('/libri/:utenteId', async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const { utenteId } = req.params;
 
-    // Trova l'utente con l'ID specificato
-    const utente = await Utente.findById(userId);
+    if (!utenteId) {
+      // Se l'utenteId non è fornito, restituisci una lista di 10 libri ordinati per aggiunta
+      const libri = await Libro.find()
+        .sort({ aggiunta: -1 })
+        .limit(10);
+
+      return res.json(libri);
+    }
+
+    // Verifica se l'utente esiste nel database
+    const utente = await Utente.findById(utenteId);
 
     if (!utente) {
-      return res.status(404).json({ message: "Utente non trovato" });
+      return res.status(404).json({ message: 'Utente non trovato' });
     }
 
     // Ottieni i generi dei libri preferiti dell'utente
     const generiPreferiti = utente.libriPreferiti.map((libro) => libro.genere);
 
-    // Calcola il numero minimo di generi che devono corrispondere per il feed
-    const minGeneriCorrispondenti = Math.ceil(generiPreferiti.length / 2);
-
-    // Trova i libri nel feed che corrispondono ai generi preferiti dell'utente
+    // Trova i libri nel database che corrispondono ai generi preferiti dell'utente
     const libriConsigliati = await Libro.find({
       genere: { $in: generiPreferiti },
-    })
-      .limit(10) // Limita i risultati a 10 libri (puoi impostare il valore desiderato)
-      .exec();
+    }).limit(10);
 
-    // Filtra ulteriormente i libri per garantire che abbiano almeno il 50% di generi in comune
-    const libriFiltrati = libriConsigliati.filter((libro) => {
-      const generiLibro = libro.genere;
-      const generiComuni = generiPreferiti.filter((genere) =>
-        generiLibro.includes(genere)
-      );
-      return generiComuni.length >= minGeneriCorrispondenti;
-    });
-
-    res.json(libriFiltrati);
+    res.json(libriConsigliati);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-router.get("/recensioni", async (req, res) => {
+router.get('/recensioni/:utenteId', async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { utenteId } = req.params;
 
-    // Determina se l'utente è autenticato o meno
-    const isUserAuthenticated = !!userId;
+    if (!utenteId) {
+      // Se l'utenteId non è fornito, restituisci una lista generica delle 10 recensioni più recenti
+      const recensioni = await Recensione.find()
+        .sort({ data: -1 })
+        .limit(10);
 
-    // Crea un array vuoto per contenere le recensioni
-    let recensioni = [];
-
-    if (isUserAuthenticated) {
-      // Utente autenticato
-      const utente = await Utente.findById(userId);
-
-      if (!utente) {
-        return res.status(404).json({ message: "Utente non trovato" });
-      }
-
-      const generiPreferiti = utente.libriPreferiti.map(
-        (libro) => libro.genere
-      );
-
-      // Trova le recensioni che hanno almeno il 50% dei generi compatibili
-      recensioni = await Recensione.find({
-        "libro.genere": { $in: generiPreferiti },
-        autore: { $in: utente.follow },
-      }).sort({ data: -1 });
-    } else {
-      // Utente non autenticato
-      recensioni = await Recensione.find().sort({ data: -1 }).limit(10);
+      return res.json(recensioni);
     }
 
-    res.json(recensioni);
+    // Verifica se l'utente esiste nel database
+    const utente = await Utente.findById(utenteId);
+
+    if (!utente) {
+      return res.status(404).json({ message: 'Utente non trovato' });
+    }
+
+    // Ottieni i generi dei libri preferiti dell'utente
+    const generiPreferiti = utente.libriPreferiti.map((libro) => libro.genere);
+
+    // Trova le recensioni che hanno almeno il 50% dei generi compatibili
+    const recensioniConsigliate = await Recensione.find({
+      'libro.genere': { $in: generiPreferiti },
+    }).sort({ data: -1 });
+
+    res.json(recensioniConsigliate);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 module.exports = router;

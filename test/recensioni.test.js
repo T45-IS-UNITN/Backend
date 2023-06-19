@@ -2,9 +2,6 @@ const request = require("supertest");
 const assert = require("assert");
 const app = require("../index");
 const Recensione = require("../models/Recensione");
-const Libro = require("../models/Libro");
-const Utente = require("../models/Utente").Utente;
-const Commento = require("../models/Commento")
 const { setupData, testBefore, testAfter } = require("./utils")
 
 describe("Test API Recensioni", () => {
@@ -29,7 +26,7 @@ describe("Test API Recensioni", () => {
 
 
   describe("POST /recensioni", () => {
-    it("should create a new recensione and return its ID", async () => {
+    it("dovrebbe creare una nuova recensione", async () => {
       const recensioneData = {
         titolo: "Titolo recensione",
         contenuto: "Contenuto recensione",
@@ -50,7 +47,7 @@ describe("Test API Recensioni", () => {
   });
 
   describe("GET /recensioni", () => {
-    it("should return all reviews", (done) => {
+    it("dovrebbe ottenere tutte le recensioni", (done) => {
       request(app)
         .get("/recensioni")
         .expect(200)
@@ -68,7 +65,7 @@ describe("Test API Recensioni", () => {
   });
 
   describe("GET /recensioni/user/:utenteId", () => {
-    it("should return all reviews by a specific user", (done) => {
+    it("dovrebbe ottenere tutte le recensioni di un dato utente", (done) => {
       request(app)
         .get(`/recensioni/user/${utente._id}`)
         .expect(200)
@@ -86,7 +83,7 @@ describe("Test API Recensioni", () => {
   });
 
   describe("GET /recensioni/libro/:libroId", () => {
-    it("should return all reviews for a specific book", (done) => {
+    it("dovrebbe ottenere tutte le recensioni di un dato libro", (done) => {
       request(app)
         .get(`/recensioni/libro/${libro._id}`)
         .expect(200)
@@ -104,7 +101,7 @@ describe("Test API Recensioni", () => {
   });
 
   describe("DELETE /recensioni/:recensioneId", () => {
-    it("should delete a review", (done) => {
+    it("dovrebbe eliminare una recensione dato l'ID", (done) => {
       request(app)
         .delete(`/recensioni/${recensioneId}`)
         .expect(200)

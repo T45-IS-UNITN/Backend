@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Utente = require("../models/Utente");
+const Utente = require("../models/Utente").Utente;
 const Libro = require("../models/Libro");
 
 router.post("/", async (req, res) => {
@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
 
 router.delete("/", async (req, res) => {
   try {
-    const { userId, libroId } = req.query;
+    const { userId, libroId } = req.body;
 
     // Trova l'utente corrispondente
     const utente = await Utente.findById(userId);
