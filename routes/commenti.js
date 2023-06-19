@@ -18,7 +18,7 @@ router.get("/:recensioneId", async (req, res) => {
 
 // pubblica un commento
 router.post("/:recensioneId",
-  //verifyToken,
+  verifyToken,
   async (req, res) => {
     try {
       const { testo, autoreId } = req.body;
@@ -101,8 +101,8 @@ router.get("/user/:autoreId", async (req, res) => {
 
 // cancella commento
 router.delete("/:commentoId",
-  // verifyToken,
-  // verifyRole("moderatore"),
+   verifyToken,
+   verifyRole("moderatore"),
   async (req, res) => {
     try {
       const commentoId = req.params.commentoId;

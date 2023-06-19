@@ -32,23 +32,6 @@ router.post("/:userId", async (req, res) => {
   }
 });
 
-// Ottieni tutti i preferiti di un utente
-router.get("/:userId/preferiti", async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    const utente = await Utente.findById(userId).populate("libriPreferiti");
-
-    if (!utente) {
-      return res.status(404).json({ message: "Utente non trovato" });
-    }
-
-    res.json({ preferiti: utente.libriPreferiti });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // Rimuovi un utente dalla lista degli utenti seguiti
 router.delete("/:userId", async (req, res) => {
   try {
